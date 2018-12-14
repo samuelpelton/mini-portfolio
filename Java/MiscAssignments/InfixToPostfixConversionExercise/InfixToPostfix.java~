@@ -1,0 +1,89 @@
+package week8;
+
+public class InfixToPostfix
+{
+    public static void main(String args[])
+    {
+	String infix = args[0];
+	Stack stack = new Stack(infix.length());
+	String postfix = "";
+
+	for ( int i = 0; i < infix.length(); i++ )
+	    {
+		if ( infix.charAt(i) != '(' &&
+		     infix.charAt(i) != ')' &&
+		     infix.charAt(i) != '+' &&
+		     infix.charAt(i) != '-' &&
+		     infix.charAt(i) != '*' &&
+		     infix.charAt(i) != '/' )
+		    {
+			postfix += infix.charAt(i);
+		    }
+		else
+		    {
+			if ( stack.empty() )
+			    {
+				stack.push(infix.charAt(i));
+			    }
+			else
+			    {
+				if ( infix.charAt(i) == ')' )
+				    {
+					while ( stack.peek() != '(' )
+					    {
+						postfix += stack.pop();
+					    }
+					stack.pop();
+				    }
+				else
+				    {
+					if ( precedence(infix.charAt(i)) < 
+					     precedence(stack.peek()) ||
+					     stack.peek() == '(' )
+					    {
+						stack.push(infix.charAt(i));
+					    }
+					else
+					    {
+						while ( ! stack.empty() &&
+						        precedence(infix.charAt(i)) >=
+							precedence(stack.peek()) &&
+							stack.peek() != '(' )
+						    {
+							postfix += stack.pop();
+						    }
+						stack.push(infix.charAt(i));
+					    }
+				    }
+			    }
+		    }
+	    }
+	while ( !stack.empty() )
+	    {
+		postfix += stack.pop();
+	    }
+
+	System.out.println(postfix);
+    }
+
+    public static int  precedence( char operator )
+    {
+        if ( operator == '(' || operator == ')' )
+	    {
+		return 1;
+	    }
+	if ( operator == '*' || operator == '/' )
+	    {
+		return 2;
+	    }
+	if ( operator == '+' || operator == '-' )
+	    {
+		return 3;
+	    }
+	else
+	    {
+		System.out.println("invalid operator");
+		return -1;
+	    }
+    }
+}
